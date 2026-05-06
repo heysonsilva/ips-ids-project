@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+
+  suricata:
+    build: ./suricata-host
+    container_name: suricata
+    privileged: true
+    networks:
+      atacante_net:
+        ipv4_address: 10.10.0.254
+      alvo_net:
+        ipv4_address: 10.20.0.254
+ 
+  atacante:
+    build: ./atacante-host
+    container_name: atacante
+    tty: true
+    privileged: true
+    networks:
+      atacante_net:
+        ipv4_address: 10.10.0.10
+    command: sh -c "ip route del default && ip route add default via 10.10.0.254 && sleep infinity"
+
+  alvo:
+    build: ./alvo-host
+    container_name: alvo
+    privileged: true
+    tty: true
+    networks:
+      alvo_net:
+        ipv4_address: 10.20.0.10
+    command: sh -c "ip route del default && ip route add default via 10.20.0.254 && nginx -g 'daemon off;'"
+
+networks:
+  atacante_net:
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
+
+  alvo_net:
+    ipam:
+      config:
+        - subnet: 10.20.0.0/24

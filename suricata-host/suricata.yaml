@@ -1,0 +1,30 @@
+%YAML 1.1
+---
+
+vars:
+  address-groups:
+    HOME_NET: "[10.10.0.0/24,10.20.0.0/24]"
+
+default-rule-path: /var/lib/suricata/rules
+
+rule-files:
+  - local.rules
+
+outputs:
+  - fast:
+      enabled: yes
+      filename: /var/log/suricata/fast.log
+
+  - eve-log:
+      enabled: yes
+      filename: /var/log/suricata/eve.json
+      filetype: regular
+
+detect:
+  profile: medium
+
+stream:
+  inline: yes
+
+nfq:
+  mode: accept
